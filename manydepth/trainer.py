@@ -685,42 +685,6 @@ class Trainer:
 
         return losses
 
-    def compute_sgt_loss_old(self, inputs, outputs):
-        seg_target = inputs[('seg', 0, 0)]
-        _, _, h, w = seg_target.shape
-        total_loss = 0
-
-        for s, kernel_size in zip(self.opt.sgt_scales, self.opt.sgt_kernel_size):
-            # s: [3, 2, 1]
-            pad = kernel_size // 2
-            h = self.opt.height // 2 ** s
-            w = self.opt.width // 2 ** s
-            seg = F.interpolate(seg_target, size=(h, w), mode='nearest')
-            seg_pad = F.pad(seg, pad=[pad] * 4, value=-1)
-            patches = seg_pad.unfold(2, kernel_size, 1).unfold(3, kernel_size, 1)
-            aggregated_label = patches - seg.unsqueeze(-1).unsqueeze(-1)
-            pos_idx = (aggregated_label == 0).float()  # misjudge self as pos.
-            neg_idx = (aggregated_label != 0).float()
-            pos_idx_num = pos_idx.sum(dim=(-1, -2))
-            neg_idx_num = neg_idx.sum(dim=(-1, -2))
-
-            boundary_region = (pos_idx_num >= kernel_size - 1) & (
-                    neg_idx_num >= kernel_size - 1)
-
-            feature = outputs[('d_feature', s)]
-            affinity = self.compute_affinity(feature, kernel_size=kernel_size)
-            pos_dist = (pos_idx * affinity).sum(dim=(-1, -2))[boundary_region] / \
-                        pos_idx_num[boundary_region]
-
-            neg_dist = neg_idx * affinity
-            neg_dist[neg_dist == 0] = 1e3
-            neg_dist = neg_dist.min(dim=-1)[0].min(dim=-1)[0][boundary_region]
-            # zeros = torch.zeros(pos_dist.shape).to(pos_dist.device)
-            loss = torch.clamp(pos_dist - neg_dist + self.opt.sgt_margin, min=0)
-
-            total_loss += loss.mean() / (2 ** s)
-        return total_loss
-
     def compute_sgt_loss(self, inputs, outputs):
         seg_target = inputs[('seg', 0, 0)]
         N, _, H, W = seg_target.shape
