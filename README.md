@@ -12,4 +12,13 @@ We introduce **TriDepth**, a high-performance depth estimator with a highly gene
 #### Also Highly Generalizable:
 ![generalizability](assets/generalizability_table.png)
 
+## ✏️ Citation
+
+If you find our work useful or interesting, please consider citing [our paper]():
+
+coming soon...
+
+## 👀 Training
+
+coming soon...
 
