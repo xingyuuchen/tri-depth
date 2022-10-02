@@ -4,6 +4,8 @@ The official Pytorch implementation of the paper "[Self-Supervised Monocular Dep
 
 We introduce **TriDepth**, a high-performance depth estimator with a highly generalizable redesigned triplet loss.
 
+### Note: The pretrained models and other necessary data for reproducing our results will be released when the paper is publicly available.
+
 ## 📈 Results
 
 #### State-of-the-art Performance:
