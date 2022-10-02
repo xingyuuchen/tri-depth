@@ -77,8 +77,6 @@ class MonoDataset(data.Dataset):
             s = 2 ** i
             self.resize[i] = transforms.Resize((self.height // s, self.width // s),
                                                interpolation=self.interp)
-        self.resize_seg = transforms.Resize((self.height, self.width),
-                                            interpolation=Image.BILINEAR)
 
         self.load_depth = self.check_depth()
 
@@ -164,9 +162,7 @@ class MonoDataset(data.Dataset):
                                                     f'--data_path is set correctly, or try adding'
                                                     f' the --png flag. {e}')
 
-            raw_seg = self.get_seg_map(folder, frame_index, side, do_flip)
-            seg = self.resize_seg(raw_seg)
-            inputs[('seg', 0, 0)] = torch.tensor(np.array(seg)).float().unsqueeze(0)
+        self.get_item_custom(inputs, folder, frame_index, side, do_flip)
 
         # adjusting intrinsics to match each scale in the pyramid
         for scale in range(self.num_scales):
@@ -207,3 +203,7 @@ class MonoDataset(data.Dataset):
 
     def get_depth(self, folder, frame_index, side, do_flip):
         raise NotImplementedError
+
+    def get_item_custom(self, inputs, folder, frame_index, side, do_flip):
+        # implement by derived class if needed.
+        return

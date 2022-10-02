@@ -10,6 +10,7 @@ from manydepth.kitti_utils import generate_depth_map
 from .mono_dataset import MonoDataset
 from ..seg_utils import *
 from PIL import Image
+from torchvision import transforms
 
 
 class KITTIDataset(MonoDataset):
@@ -71,9 +72,12 @@ class KITTIRAWDataset(KITTIDataset):
     """
     def __init__(self, *args, **kwargs):
         super(KITTIRAWDataset, self).__init__(*args, **kwargs)
+        if self.is_train:
+            self.resize_seg = transforms.Resize((self.height, self.width),
+                                                interpolation=Image.BILINEAR)
 
     def get_image_path(self, folder, frame_index, side, seg=False):
-        f_str = "{:010d}{}".format(frame_index, '.png' if seg else '.jpg')
+        f_str = "{:010d}{}".format(frame_index, '.png' if seg else self.img_ext)
         assert side is not None
         if seg:
             image_path = os.path.join(
@@ -82,6 +86,12 @@ class KITTIRAWDataset(KITTIDataset):
             image_path = os.path.join(
                 self.data_path, folder, "image_0{}/data".format(self.side_map[side]), f_str)
         return image_path
+
+    def get_item_custom(self, inputs, folder, frame_index, side, do_flip):
+        if self.is_train:   # semantic segmentation is not needed when inferring
+            raw_seg = self.get_seg_map(folder, frame_index, side, do_flip)
+            seg = self.resize_seg(raw_seg)
+            inputs[('seg', 0, 0)] = torch.tensor(np.array(seg)).float().unsqueeze(0)
 
     def get_seg_map(self, folder, frame_index, side, do_flip):
         path = self.get_image_path(folder, frame_index, side, True)
