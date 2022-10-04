@@ -16,6 +16,7 @@ from tensorboardX import SummaryWriter
 import json
 
 from .utils import readlines, sec_to_hm_str
+from .datasets.mono_dataset import DataSetUsage
 from .layers import SSIM, BackprojectDepth, Project3D, transformation_from_parameters, \
     disp_to_depth, get_smooth_loss, compute_depth_errors
 
@@ -146,14 +147,14 @@ class Trainer:
 
         train_dataset = self.dataset(
             self.opt.data_path, train_filenames, self.opt.height, self.opt.width,
-            frames_to_load, 4, is_train=True, img_ext=img_ext)
+            frames_to_load, 4, dataset_usage=DataSetUsage.TRAIN, img_ext=img_ext)
         self.train_loader = DataLoader(
             train_dataset, self.opt.batch_size, True,
             num_workers=self.opt.num_workers, pin_memory=True, drop_last=True,
             worker_init_fn=seed_worker)
         val_dataset = self.dataset(
             self.opt.data_path, val_filenames, self.opt.height, self.opt.width,
-            frames_to_load, 4, is_train=False, img_ext=img_ext)
+            frames_to_load, 4, dataset_usage=DataSetUsage.VALIDATE, img_ext=img_ext)
         self.val_loader = DataLoader(
             val_dataset, self.opt.batch_size, True,
             num_workers=self.opt.num_workers, pin_memory=True, drop_last=True)
@@ -717,7 +718,7 @@ class Trainer:
             pos_dist = ((pos_idx * affinity).sum(dim=(-1, -2)) / pos_num)[is_boundary]
 
             zeros = torch.zeros(pos_dist.shape, device=self.device)
-            if not self.opt.disable_contrastive:
+            if not self.opt.disable_isolated_triplet:
                 loss = pos_dist + torch.max(zeros, self.opt.sgt_ctr_margin - neg_dist)
             else:
                 loss = torch.max(zeros,  self.opt.sgt_margin + pos_dist - neg_dist)

@@ -8,6 +8,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
+from .datasets.mono_dataset import DataSetUsage
 from .utils import readlines
 from .options import MonodepthOptions
 from manydepth import datasets, networks
@@ -107,13 +108,13 @@ def evaluate(opt):
             dataset = datasets.CityscapesEvalDataset(opt.data_path, filenames,
                                                      HEIGHT, WIDTH,
                                                      frames_to_load, 4,
-                                                     is_train=False)
+                                                     dataset_usage=DataSetUsage.TEST)
 
         else:
             dataset = datasets.KITTIRAWDataset(opt.data_path, filenames,
                                                HEIGHT, WIDTH,
                                                frames_to_load, 4,
-                                               is_train=False)
+                                               dataset_usage=DataSetUsage.TEST)
         dataloader = DataLoader(dataset, opt.batch_size, shuffle=False, num_workers=opt.num_workers,
                                 pin_memory=True, drop_last=False)
 

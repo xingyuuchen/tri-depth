@@ -1,5 +1,6 @@
 import os
 import random
+from enum import Enum
 os.environ["MKL_NUM_THREADS"] = "1"  # noqa F402
 os.environ["NUMEXPR_NUM_THREADS"] = "1"  # noqa F402
 os.environ["OMP_NUM_THREADS"] = "1"  # noqa F402
@@ -26,6 +27,12 @@ def pil_loader(path, mode='RGB'):
                 return img.convert('RGB')
 
 
+class DataSetUsage(Enum):
+    TRAIN       = 0
+    VALIDATE    = 1
+    TEST        = 2
+
+
 class MonoDataset(data.Dataset):
     """Superclass for monocular dataloaders
     """
@@ -36,7 +43,7 @@ class MonoDataset(data.Dataset):
                  width,
                  frame_idxs,
                  num_scales,
-                 is_train=False,
+                 dataset_usage: DataSetUsage,
                  img_ext='.jpg',
                  ):
         super(MonoDataset, self).__init__()
@@ -51,7 +58,7 @@ class MonoDataset(data.Dataset):
 
         self.frame_idxs = frame_idxs
 
-        self.is_train = is_train
+        self.dataset_usage = dataset_usage
         self.img_ext = img_ext
 
         self.loader = pil_loader
@@ -133,8 +140,9 @@ class MonoDataset(data.Dataset):
         """
         inputs = {}
 
-        do_color_aug = self.is_train and random.random() > 0.5
-        do_flip = self.is_train and random.random() > 0.5
+        # Do data augmentation only in training
+        do_color_aug = self.dataset_usage == DataSetUsage.TRAIN and random.random() > 0.5
+        do_flip = self.dataset_usage == DataSetUsage.TRAIN and random.random() > 0.5
 
         folder, frame_index, side = self.index_to_folder_and_frame_idx(index)
 

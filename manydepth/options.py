@@ -22,7 +22,7 @@ class MonodepthOptions:
                                  default=False, action="store_true")
         self.parser.add_argument("--disable_hardest_neg",
                                  default=False, action="store_true")
-        self.parser.add_argument("--disable_contrastive",
+        self.parser.add_argument("--disable_isolated_triplet",
                                  default=False, action="store_true")
         self.parser.add_argument("--sgt", type=float, default=0.1, help='weight factor for sgt loss')
         self.parser.add_argument("--sgt_scales", nargs='+', type=int, default=[3, 2, 1],
