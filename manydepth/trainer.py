@@ -674,12 +674,15 @@ class Trainer:
             total_loss = total_loss + loss
             losses["loss/{}".format(scale)] = loss
 
-        sgt_loss = self.compute_sgt_loss(inputs, outputs)
-        total_loss = total_loss + sgt_loss * self.opt.sgt
+        if not self.opt.disable_triplet_loss:
+            sgt_loss = self.compute_sgt_loss(inputs, outputs)
+            total_loss = total_loss + sgt_loss * self.opt.sgt
         losses["loss"] = total_loss
 
         return losses
 
+    # If you want to port our redesigned triplet loss into your model to
+    # achieve a superior result, simply add this function to the loss calculation.
     def compute_sgt_loss(self, inputs, outputs):
         seg_target = inputs[('seg', 0, 0)]
         N, _, H, W = seg_target.shape

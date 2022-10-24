@@ -21,7 +21,7 @@ If you find our work useful or interesting, please consider citing [our paper](h
 
 ## 👀 Training
 
-Our code is build upon [Mnaydepth](https://github.com/nianticlabs/manydepth).
+Our code is build upon [Manydepth](https://github.com/nianticlabs/manydepth).
 
 [KITTI-RAW](https://www.cvlibs.net/datasets/kitti/raw_data.php) dataset and pre-computed [segmentation images](https://drive.google.com/file/d/1FNxJzGTfP1O_pUX9Va7d0dqZWtRi833X/view) provided by [FSRE-Depth](https://github.com/hyBlue/FSRE-Depth) are needed for training.
 
