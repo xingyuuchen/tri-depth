@@ -676,6 +676,7 @@ class Trainer:
 
         if not self.opt.disable_triplet_loss:
             sgt_loss = self.compute_sgt_loss(inputs, outputs)
+            losses['sgt_loss'] = sgt_loss
             total_loss = total_loss + sgt_loss * self.opt.sgt
         losses["loss"] = total_loss
 
@@ -722,7 +723,7 @@ class Trainer:
 
             zeros = torch.zeros(pos_dist.shape, device=self.device)
             if not self.opt.disable_isolated_triplet:
-                loss = pos_dist + torch.max(zeros, self.opt.sgt_ctr_margin - neg_dist)
+                loss = pos_dist + torch.max(zeros, self.opt.sgt_isolated_margin - neg_dist)
             else:
                 loss = torch.max(zeros,  self.opt.sgt_margin + pos_dist - neg_dist)
             total_loss = total_loss + loss.mean() / (2 ** s)
