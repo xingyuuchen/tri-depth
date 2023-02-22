@@ -1,5 +1,3 @@
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/self-supervised-monocular-depth-estimation-3/unsupervised-monocular-depth-estimation-on-4)](https://paperswithcode.com/sota/unsupervised-monocular-depth-estimation-on-4?p=self-supervised-monocular-depth-estimation-3)
-
 # TriDepth
 
 The official Pytorch implementation of the paper "[Self-Supervised Monocular Depth Estimation: Solving the Edge-Fattening Problem](https://arxiv.org/abs/2210.00411)" (**WACV 2023**)
