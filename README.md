@@ -14,7 +14,16 @@ We introduce **TriDepth**, a high-performance depth estimator with a highly gene
 
 ## ✏️ Citation
 
-If you find our work useful or interesting, please consider citing [our paper](https://arxiv.org/abs/2210.00411).
+If you find our work useful or interesting, please consider citing our paper:
+```latex
+@inproceedings{chen2023self,
+  title={{Self-Supervised Monocular Depth Estimation: Solving the Edge-Fattening Problem}},
+  author={Chen, Xingyu and Zhang, Ruonan and Jiang, Ji and Wang, Yan and Li, Ge and Li, Thomas H},
+  booktitle={Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision},
+  pages={5776--5786},
+  year={2023}
+}
+```
 
 
 ## 👀 Training
